@@ -1,154 +1,102 @@
 # PyTutor AI
 
-## 📖 Tổng quan
+Hệ thống học lập trình Python thông minh với AI Tutor: môi trường thực thi code an toàn (Docker sandbox), AI chat với RAG (Qdrant + Groq Llama 3.1), phân tích code thông minh, và hệ thống quản lý bài tập toàn diện.
 
-**PyTutor AI** là hệ thống học lập trình Python thông minh, tích hợp AI và RAG (Retrieval-Augmented Generation) với Qdrant vector database. Hệ thống cung cấp môi trường lập trình tương tác với khả năng chạy code trong Docker sandbox, AI tutor với kiến thức từ tài liệu Python, và đánh giá tự động bài làm.
-
-## ✨ Tính năng chính
-
-### 🎓 Cho Người học
-- **📝 Trình soạn thảo code**: Monaco Editor với IntelliSense và syntax highlighting cho Python
-- **🐳 Sandbox an toàn**: Chạy code Python trong Docker container cô lập với giới hạn CPU/RAM
-- **🤖 AI Chat Tutor**: Trợ lý AI với RAG, truy xuất kiến thức từ tài liệu Python qua Qdrant
-- **💡 AI Hints**: Phân tích code và đưa ra gợi ý cải thiện thông minh
-- **📚 Thư viện bài tập**: Bài tập đa dạng với phân loại theo chủ đề
-- **✅ Kiểm tra tự động**: Đánh giá code với test cases và feedback chi tiết
-- **📊 Dashboard cá nhân**: Theo dõi tiến độ học tập và thống kê
-
-### 👨‍💼 Cho Quản trị viên
-- **👥 Quản lý người dùng**: CRUD users, roles (student/admin)
-- **📝 Quản lý bài tập**: Problems, test cases, và problem types
-- **🗄️ Qdrant Management**: Import/Export tài liệu vào vector database
-- **📈 Dashboard admin**: Thống kê hệ thống, submissions, users
-- **🔧 System Config**: Sandbox settings, execution limits
-
-## 🏗️ Kiến trúc hệ thống
-
-### Clean Architecture (Backend)
+## Kiến trúc
 
 ```
-backend/
-├── api/                       # API Layer (Controllers)
-│   └── routers/              # FastAPI routers
-│       ├── admin.py          # Admin endpoints
-│       ├── ai_tutor.py       # AI chat/hints endpoints
-│       ├── problems.py       # Problems CRUD
-│       ├── submissions.py    # Submissions handling
-│       └── system.py         # System/config endpoints
-│
-├── domain/                    # Domain Layer (Business Logic)
-│   ├── ai/                   # AI services
-│   │   ├── hybrid_analyzer.py # Code analysis with RAG
-│   │   ├── hybrid_tutor.py   # Chat tutor with RAG
-│   │   └── qdrant_tutor.py   # Qdrant-based RAG
-│   └── models/               # Domain models (SQLAlchemy)
-│       ├── core.py           # User, Problem, Submission
-│       ├── qdrant_schedule.py # Qdrant import jobs
-│       └── submission.py     # Submission details
-│
-├── infra/                     # Infrastructure Layer
-│   ├── analysis/             # Code execution & analysis
-│   ├── services/             # External services
-│   │   ├── docker_manager.py # Docker sandbox manager
-│   │   └── scheduler.py      # Background job scheduler
-│   └── utils/                # Utilities
-│
-├── app/                       # Application Layer
-│   ├── main.py               # FastAPI app setup
-│   ├── settings.py           # Configuration
-│   ├── db.py                 # Database connection
-│   └── auth.py               # JWT authentication
-│
-└── sandbox_service/           # Standalone sandbox service
-    └── main.py               # WebSocket server for code execution
+Frontend (React + TypeScript)
+    ↓
+Backend API (FastAPI + Clean Architecture)
+    ↓
+Docker Sandbox + Qdrant RAG + Groq LLM
 ```
 
-### Frontend Structure
-
-```
-frontend/
-├── App.tsx                    # Main SPA với routing
-├── components/               # React components
-│   ├── AdminDashboard.tsx    # Admin panel
-│   ├── Login.tsx             # Authentication
-│   ├── ProblemList.tsx       # Problem browser
-│   ├── CodeEditor.tsx        # Monaco editor wrapper
-│   ├── ProblemTypeManager.tsx # Admin problem types
-│   └── ...                   # Other UI components
-├── services/
-│   └── api.ts                # API client (fetch wrappers)
-└── types.ts                  # TypeScript definitions
-```
-
-## 🛠️ Tech Stack
+## Bắt đầu nhanh
 
 ### Backend
-- **FastAPI** (v0.109+): Modern Python web framework
-- **PostgreSQL**: Production database (SQLAlchemy ORM)
-- **Qdrant**: Vector database cho RAG
-- **Google Gemini AI**: LLM cho chat và code analysis
-- **Docker SDK**: Quản lý sandbox containers
-- **SentenceTransformers**: Embedding model
-- **WebSocket**: Real-time terminal communication
-- **JWT**: Authentication
-
-### Frontend
-- **React 19** + **TypeScript**: UI framework
-- **Vite**: Fast build tool
-- **Monaco Editor** (`@monaco-editor/react`): VS Code editor
-- **Lucide React**: Modern icon library
-- **Recharts**: Data visualization
-- **XTerm.js**: Terminal emulator for sandbox
-- **React Router DOM**: SPA routing
-- **React Markdown**: Markdown rendering
-
-### DevOps & Infrastructure
-- **Docker**: Container platform cho sandbox
-- **PostgreSQL**: Relational database
-- **Qdrant Cloud**: Managed vector database
-- **Render**: Backend hosting
-- **Vercel**: Frontend hosting
-- **Hugging Face Spaces**: Sandbox service hosting
-
-## 🚀 Cài đặt và Chạy
-
-### Yêu cầu
-- **Python 3.9+** và `pip`
-- **Node.js 18+** và `npm`
-- **Docker** (cho sandbox execution)
-- **PostgreSQL** (hoặc dùng SQLite cho dev)
-
-### 1. Clone Repository
-
-```bash
-git clone <repository-url>
-cd pytutor
-```
-
-### 2. Backend Setup
 
 ```bash
 cd backend
 pip install -r requirements.txt
+docker build -f Dockerfile.sandbox -t python-sandbox .
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-**Cấu hình môi trường** - Tạo file `backend/.env`:
+Backend chạy tại `http://localhost:8000`
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend chạy tại `http://localhost:5173`
+
+## Tính năng
+
+✅ **Code Execution**: Docker sandbox cô lập, giới hạn CPU/RAM/timeout, không kết nối mạng  
+✅ **AI Chat Tutor**: RAG với Qdrant vector DB, powered by Groq (Llama 3.1-8B-Instant)  
+✅ **AI Hints**: Phân tích code thông minh, gợi ý cải thiện  
+✅ **Monaco Editor**: VS Code editor với IntelliSense đầy đủ  
+✅ **Terminal tương tác**: WebSocket terminal hỗ trợ `input()` real-time  
+✅ **Test Cases**: Tự động chấm bài với test cases  
+✅ **Dashboard**: Theo dõi tiến độ học tập, thống kê submissions  
+✅ **Admin Panel**: Quản lý users, problems, test cases, Qdrant documents  
+✅ **Clean Architecture**: api/domain/infra layers, dễ maintain và mở rộng
+
+## API Endpoints
+
+### Authentication & Users
+- `POST /api/auth/login` - Đăng nhập
+- `POST /api/auth/register` - Đăng ký
+- `GET /api/auth/me` - Thông tin user hiện tại
+
+### Problems & Submissions
+- `GET /api/problems` - Danh sách bài tập
+- `GET /api/problems/{id}` - Chi tiết bài tập
+- `POST /api/submissions` - Nộp bài
+- `GET /api/submissions` - Lịch sử nộp bài
+
+### AI Tutor
+- `POST /api/ai/chat` - Chat với AI tutor (RAG)
+- `POST /api/ai/hint` - Xin gợi ý cho code
+- `GET /api/ai/chat/history` - Lịch sử chat
+
+### Admin
+- `GET /api/admin/users` - Quản lý users
+- `GET /api/admin/problems` - Quản lý problems
+- `POST /api/admin/problems` - Tạo problem mới
+- `PUT /api/admin/problems/{id}` - Cập nhật problem
+- `DELETE /api/admin/problems/{id}` - Xóa problem
+- `POST /api/admin/qdrant/import` - Import documents vào Qdrant
+- `GET /api/admin/stats` - Thống kê hệ thống
+
+### System
+- `GET /health` - Health check
+- `GET /api/config` - Sandbox config
+
+## Biến môi trường
+
+**Backend** (`backend/.env`):
 
 ```env
 # Database
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/pytutor
-# hoặc dùng SQLite cho dev:
-# DATABASE_URL=sqlite:///./pytutor.db
+# hoặc SQLite cho dev: sqlite:///./pytutor.db
 
 # Authentication
 SECRET_KEY=your-secret-key-change-in-production
 JWT_ALGORITHM=HS256
 
-# AI Services
-GEMINI_API_KEY=your-gemini-api-key
+# AI Services - Groq LLM
+GROQ_API_KEY=your-groq-api-key
+GROQ_MODEL=llama-3.1-8b-instant
 
-# Qdrant Vector Database (optional, sẽ dùng in-memory nếu không set)
-QDRANT_URL=https://your-qdrant-cloud-url
+# Qdrant Vector Database (optional, dùng in-memory nếu không set)
+QDRANT_URL=https://your-cluster.aws.cloud.qdrant.io:6333
 QDRANT_API_KEY=your-qdrant-api-key
 
 # CORS
@@ -166,156 +114,92 @@ ENABLE_WS_TERMINAL=true
 WARMUP_AI_ON_STARTUP=false
 ```
 
-**Chạy backend:**
+**Frontend** (`frontend/.env`):
 
-```bash
-# Từ thư mục backend/
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```env
+VITE_API_URL=http://localhost:8000
 ```
 
-API sẽ chạy tại `http://localhost:8000`
+## Cấu trúc thư mục
 
-### 3. Sandbox Service (Optional - cho WebSocket terminal)
+**Backend** (Clean Architecture):
 
-```bash
-cd backend/sandbox_service
-pip install -r requirements.txt
-python main.py
+```
+backend/
+├── api/routers/          # Controllers (admin, ai_tutor, problems, submissions, system)
+├── domain/               # Business logic
+│   ├── ai/              # AI services (hybrid_analyzer, hybrid_tutor, qdrant_tutor)
+│   └── models/          # Domain models (User, Problem, Submission, etc.)
+├── infra/               # Infrastructure
+│   ├── analysis/        # Code execution & analysis
+│   ├── services/        # Docker manager, scheduler
+│   └── utils/           # LLM utils, helpers
+├── app/                 # Application layer
+│   ├── main.py         # FastAPI app
+│   ├── settings.py     # Config
+│   ├── db.py           # Database
+│   └── auth.py         # JWT auth
+└── sandbox_service/     # Standalone WebSocket sandbox
 ```
 
-Sandbox service chạy tại `ws://localhost:8765`
+**Frontend**:
 
-### 4. Frontend Setup
-
-```bash
-cd frontend
-npm install
-npm run dev
+```
+frontend/
+├── App.tsx              # Main SPA + routing
+├── components/          # React components
+│   ├── AdminDashboard.tsx
+│   ├── Login.tsx
+│   ├── ProblemList.tsx
+│   ├── CodeEditor.tsx
+│   └── ...
+├── services/api.ts      # API client
+└── types.ts            # TypeScript types
 ```
 
-Frontend chạy tại `http://localhost:5173`
+## Database Models
 
-### 5. Docker Sandbox Image
-
-Build Docker image cho sandbox:
-
-```bash
-cd backend
-docker build -f Dockerfile.sandbox -t python-sandbox .
-```
-
-## 📊 Database
-
-### Khởi tạo Database
-
-SQLAlchemy sẽ tự động tạo bảng khi backend start lần đầu.
-
-### Models chính:
-
-- **User**: Users (students, admins), authentication
+- **User**: Authentication, roles (student/admin)
 - **Problem**: Coding problems với metadata
-- **ProblemType**: Categories cho problems
-- **Submission**: Student submissions với results
+- **ProblemType**: Categories
+- **Submission**: Student submissions + results
 - **TestCase**: Unit tests cho problems
-- **QdrantSchedule**: Background jobs cho Qdrant import
+- **QdrantSchedule**: Background import jobs
 
-## 📝 API Documentation
+SQLAlchemy tự động tạo bảng khi backend start.
 
-Sau khi chạy backend:
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+## Tech Stack
 
-### Main Endpoints:
+**Frontend**: React 19, TypeScript, Vite, Monaco Editor, Lucide Icons, Recharts, XTerm.js  
+**Backend**: FastAPI, SQLAlchemy, PostgreSQL, Docker SDK, Groq API, Qdrant, SentenceTransformers  
+**AI**: Groq (Llama 3.1-8B-Instant), Qdrant vector DB, RAG  
+**DevOps**: Docker, Render, Vercel, Hugging Face Spaces
 
-- `POST /api/auth/login` - Authentication
-- `GET /api/problems` - List problems
-- `POST /api/submissions` - Submit code
-- `POST /api/ai/chat` - AI tutor chat
-- `POST /api/ai/hint` - Get AI hint
-- `GET /api/admin/users` - Admin: list users
-- `POST /api/admin/qdrant/import` - Admin: import Qdrant docs
-
-## 🧪 Testing
-
-### Backend
+## Phát triển
 
 ```bash
+# Backend dev server
 cd backend
-pytest
-```
+uvicorn app.main:app --reload
 
-### Frontend
-
-```bash
+# Frontend dev server
 cd frontend
-npm run build  # Verify production build
+npm run dev
+
+# Build frontend for production
+npm run build
+
+# API docs
+open http://localhost:8000/docs
 ```
 
-## 🌐 Deployment
+## Deployment
 
-### Backend (Render)
-
-```yaml
-# render.yaml
-services:
-  - type: web
-    name: pytutor-backend
-    env: python
-    buildCommand: pip install -r backend/requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase: pytutor-db
-      - key: SECRET_KEY
-        generateValue: true
-      - key: GEMINI_API_KEY
-        sync: false
-```
-
-### Frontend (Vercel)
-
-```json
-// vercel.json
-{
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-}
-```
-
-### Sandbox Service (Hugging Face Spaces)
-
-Deploy như Space với Docker SDK enabled.
-
-## 📖 Documentation
-
-- **Thesis**: Luận văn chi tiết về system design
-- **UML Diagrams**: Use case, sequence, class diagrams
-- **API Docs**: `/docs` endpoint (Swagger)
-
-## 🔐 Security
-
-- **JWT Authentication**: Token-based auth
-- **Docker Isolation**: Sandboxed code execution
-- **Resource Limits**: CPU/RAM/timeout constraints
-- **No network access**: Trong sandbox (mặc định)
-
-## 📄 License
-
-MIT License (hoặc license khác tùy chọn)
-
-## 👨‍💻 Author
-
-[Tên tác giả] - [Email/Contact]
-
-## 🙏 Acknowledgments
-
-- **Google Gemini AI** - LLM capabilities
-- **Qdrant** - Vector database
-- **FastAPI** & **React** teams
-- **Monaco Editor** - VS Code technology
-- Open-source community
+**Backend**: Render (hoặc Railway, DigitalOcean)  
+**Frontend**: Vercel (hoặc Netlify)  
+**Sandbox Service**: Hugging Face Spaces  
+**Database**: PostgreSQL (Render, Supabase, hoặc Neon)  
+**Qdrant**: Qdrant Cloud (managed)
 
 ---
 
